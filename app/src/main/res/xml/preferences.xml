@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="pref_host"
+        android:title="@string/pref_host"
+        android:summary="@string/pref_host_summary"
+        android:defaultValue="https://saas.hrzucchetti.it/hrpdefault/"
+    />
+    <EditTextPreference
+        android:key="pref_username"
+        android:title="@string/pref_username"
+        android:summary="@string/pref_username_summary"
+    />
+    <EditTextPreference
+        android:key="pref_password"
+        android:title="@string/pref_password"
+        android:summary="@string/pref_password_summary"
+        android:inputType="textPassword"
+    />
+    <it.buch85.timbrum.prefs.TimePreference
+        android:key="pref_worktime"
+        android:title="@string/pref_worktime"
+        android:summary="@string/pref_worktime_summary"
+		android:defaultValue="28800000"
+		 />
+</PreferenceScreen>

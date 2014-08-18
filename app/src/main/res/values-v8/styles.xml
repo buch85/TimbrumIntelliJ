@@ -1,0 +1,11 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme for API 8+. This theme completely replaces
+        AppBaseTheme from res/values/styles.xml on API 8+ devices.
+    -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+       <item name="android:textColor">@android:color/black</item>
+    </style>
+
+</resources>
