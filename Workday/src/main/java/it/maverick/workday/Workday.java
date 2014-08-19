@@ -3,18 +3,18 @@ package it.maverick.workday;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by Pasquale on 10/07/2014.
  */
 public class Workday {
 
-    private static final int MILLISECONDS = 1000;
-    private static final int SECONDS_IN_A_MINUTE = 60;
-    private static final int MINUTES_IN_AN_HOUR = 60;
-    private static final int HOURS_IN_A_DAY = 24;
+    public static final int MILLISECONDS = 1000;
+    public static final int SECONDS_IN_A_MINUTE = 60;
+    public static final int MINUTES_IN_AN_HOUR = 60;
+    public static final int HOURS_IN_A_DAY = 24;
 
     private Clock clock;
     private long workingDayMillis;
@@ -82,7 +82,7 @@ public class Workday {
     }
 
     private Date getValidStartLunchBreak() {
-        Calendar startLunchCalendar = new GregorianCalendar();
+        Calendar startLunchCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+00"));
         startLunchCalendar.setTimeInMillis(clock.getTimeNow());
         startLunchCalendar.set(Calendar.HOUR_OF_DAY, startLunchH);
         startLunchCalendar.set(Calendar.MINUTE, startLunchM);
@@ -90,7 +90,7 @@ public class Workday {
     }
 
     private Date getValidStopLunchBreak() {
-        Calendar stopLunchCalendar = new GregorianCalendar();
+        Calendar stopLunchCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+00"));
         stopLunchCalendar.setTimeInMillis(clock.getTimeNow());
         stopLunchCalendar.set(Calendar.HOUR_OF_DAY, stopLunchH);
         stopLunchCalendar.set(Calendar.MINUTE, stopLunchM);

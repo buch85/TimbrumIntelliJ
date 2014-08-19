@@ -13,23 +13,23 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.buch85.timbrum.VersoTimbratura;
+
 /**
  * Created by mbacer on 11/04/14.
  */
 public class TimbraturaRequest extends AbstractRequest {
 
     public static final String VERSO_FIELD   = "verso";
-    public static final String VERSO_ENTRATA = "E";
-    public static final String VERSO_USCITA  = "U";
 
     public TimbraturaRequest(HttpClient httpclient, HttpContext context) {
         super(httpclient, context);
     }
 
-    private void timbraVerso(String verso) throws IOException {
-    	request = new HttpPost(URI.create(url));
+    private void timbraVerso(VersoTimbratura verso) throws IOException {
+        request = new HttpPost(URI.create(url));
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair(VERSO_FIELD, verso));
+        formparams.add(new BasicNameValuePair(VERSO_FIELD, verso.getCode()));
         request.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
         HttpResponse response = httpclient.execute(request,context);
         response.getEntity().consumeContent();
@@ -37,10 +37,10 @@ public class TimbraturaRequest extends AbstractRequest {
     }
 
     public void entrata() throws IOException {
-        timbraVerso(VERSO_ENTRATA);
+        timbraVerso(VersoTimbratura.ENTRATA);
     }
 
     public void uscita() throws IOException {
-        timbraVerso(VERSO_USCITA);
+        timbraVerso(VersoTimbratura.ENTRATA);
     }
 }

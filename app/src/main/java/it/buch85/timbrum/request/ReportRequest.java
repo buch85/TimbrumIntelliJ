@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.buch85.timbrum.RecordTimbratura;
+
 /**
  * Created by mbacer on 16/04/14.
  */
 public class ReportRequest extends AbstractRequest {
-	@SuppressLint("SimpleDateFormat")
-	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    @SuppressLint("SimpleDateFormat")
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public ReportRequest(HttpClient httpclient, HttpContext context) {
         super(httpclient, context);
@@ -37,39 +39,39 @@ public class ReportRequest extends AbstractRequest {
 
 
     public ArrayList<RecordTimbratura> getTimbrature(Date date) throws IOException, JSONException {
-    	request =new HttpPost(URI.create(url));
-    	List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        request = new HttpPost(URI.create(url));
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("rows", "10"));
         formparams.add(new BasicNameValuePair("startrow", "0"));
         formparams.add(new BasicNameValuePair("count", "true"));
         formparams.add(new BasicNameValuePair("sqlcmd", "rows:ushp_fgettimbrus"));
         formparams.add(new BasicNameValuePair("pDATE", dateFormat.format(date)));
         request.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
-        HttpResponse response = httpclient.execute(request,context);
+        HttpResponse response = httpclient.execute(request, context);
         HttpEntity entity = response.getEntity();
-        String responseString=EntityUtils.toString(entity);
+        String responseString = EntityUtils.toString(entity);
         entity.consumeContent();
-        JSONObject jsonObject=new JSONObject(responseString);
+        JSONObject jsonObject = new JSONObject(responseString);
         JSONArray fields = jsonObject.getJSONArray("Fields");
-        String[] headers= new String[fields.length()];
-        for(int i=0;i<headers.length;i++){
-        	headers[i]=fields.getString(i);
+        String[] headers = new String[fields.length()];
+        for (int i = 0; i < headers.length; i++) {
+            headers[i] = fields.getString(i);
         }
         JSONArray data = jsonObject.getJSONArray("Data");
         ArrayList<String[]> records = new ArrayList<String[]>();
         for (int d = 0; d < data.length() - 1; d++) {
-        	JSONArray realData = data.getJSONArray(d);
-        	String[] values= new String[realData.length()];
-            for(int i=0;i<values.length;i++){
-            	values[i]=realData.getString(i);
+            JSONArray realData = data.getJSONArray(d);
+            String[] values = new String[realData.length()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = realData.getString(i);
             }
             records.add(values);
         }
 
-        ArrayList<RecordTimbratura> timbrature=new ArrayList<RecordTimbratura>();
-        for(int i=0;i<records.size();i++){
-        	RecordTimbratura r=new RecordTimbratura(records.get(i),headers);
-        	timbrature.add(r);
+        ArrayList<RecordTimbratura> timbrature = new ArrayList<RecordTimbratura>();
+        for (int i = 0; i < records.size(); i++) {
+            RecordTimbratura r = new RecordTimbratura(records.get(i), headers);
+            timbrature.add(r);
         }
         return timbrature;
     }

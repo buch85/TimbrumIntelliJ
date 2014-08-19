@@ -32,11 +32,9 @@ import java.util.concurrent.CountDownLatch;
 import it.buch85.timbrum.prefs.SettingsActivity;
 import it.buch85.timbrum.prefs.TimbrumPreferences;
 import it.buch85.timbrum.request.LoginRequest.LoginResult;
-import it.buch85.timbrum.request.RecordTimbratura;
-import it.buch85.timbrum.request.TimbraturaRequest;
 
 public class MainActivity extends Activity {
-	private TimbrumPreferences timbrumPreferences;
+    private TimbrumPreferences timbrumPreferences;
 	private ListView listView;
 	private Button buttonRefresh;
 
@@ -109,13 +107,13 @@ public class MainActivity extends Activity {
 	}
 
 	protected void exit() {
-		new TimbrumTask(TimbraturaRequest.VERSO_USCITA).execute();
+        new TimbrumTask(VersoTimbratura.ENTRATA).execute();
 
 	}
 
 	protected void enter() {
-		new TimbrumTask(TimbraturaRequest.VERSO_ENTRATA).execute();
-	}
+        new TimbrumTask(VersoTimbratura.ENTRATA).execute();
+    }
 
 	private void enableDisableButtons() {
 		boolean arePreferencesValid = timbrumPreferences.arePreferencesValid();
@@ -189,10 +187,10 @@ public class MainActivity extends Activity {
 		return time;
 	}
 
-	
-	private final class TimbrumTask extends AsyncTask<String, String, ArrayList<RecordTimbratura>> {
-        String versoTimbratura = null;
-		private ProgressDialog progressDialog;
+
+    private final class TimbrumTask extends AsyncTask<String, String, Report> {
+        VersoTimbratura versoTimbratura = null;
+        private ProgressDialog progressDialog;
 
 		String message = "";
 		private Timbrum timbrum;
@@ -203,8 +201,8 @@ public class MainActivity extends Activity {
 			this(null);
 		}
 
-		public TimbrumTask(String timbratura) {
-			this.versoTimbratura = timbratura;
+        public TimbrumTask(VersoTimbratura timbratura) {
+            this.versoTimbratura = timbratura;
 			progressDialog = new ProgressDialog(MainActivity.this);
 			progressDialog.setCancelable(false);
 			progressDialog.setCanceledOnTouchOutside(false);
@@ -220,17 +218,17 @@ public class MainActivity extends Activity {
 		}
 
 		@Override
-		protected ArrayList<RecordTimbratura> doInBackground(String... params) {
-			try {
+        protected Report doInBackground(String... params) {
+            try {
 				publishProgress( getString(R.string.logging_in));
 				LoginResult loginResult = timbrum.login();
 				if (loginResult.isSuccess()) {
 					now = timbrum.now();
 					if (versoTimbratura != null) {
 						publishProgress(getString(R.string.loading_logs));
-						ArrayList<RecordTimbratura> report = timbrum.getReport(now);
-						if (exitAsFirstTimbrum(report) || doubleTimbrum(report) ) {
-							isConfirmed=false;
+                        Report report = timbrum.getReport(now);
+                        if (!report.isNextTimbrumValid(versoTimbratura)) {
+                            isConfirmed=false;
 							final CountDownLatch latch=new CountDownLatch(1);
 							final DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
 							    public void onClick(DialogInterface dialog, int whichButton) {
@@ -245,7 +243,8 @@ public class MainActivity extends Activity {
 								}
 							});
 							latch.await();
-						}
+
+                        }
 						if(isConfirmed){
 							publishProgress(getString(R.string.timbrum_in_progress));
 							timbrum.timbra(versoTimbratura);
@@ -264,10 +263,10 @@ public class MainActivity extends Activity {
 			return null;
 		}
 
-		private AlertDialog createConfirmationDialog(String direction,DialogInterface.OnClickListener onClickListener) {
-			String title= direction.equals(TimbraturaRequest.VERSO_ENTRATA)?getString(R.string.confirm_entry_title):getString(R.string.confirm_exit_title);
-			String message= direction.equals(TimbraturaRequest.VERSO_ENTRATA)?getString(R.string.confirm_entry_message):getString(R.string.confirm_exit_message);
-			AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+        private AlertDialog createConfirmationDialog(VersoTimbratura direction, DialogInterface.OnClickListener onClickListener) {
+            String title = VersoTimbratura.ENTRATA.equals(direction) ? getString(R.string.confirm_entry_title) : getString(R.string.confirm_exit_title);
+            String message = VersoTimbratura.ENTRATA.equals(direction) ? getString(R.string.confirm_entry_message) : getString(R.string.confirm_exit_message);
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
 			.setTitle(title)
 			.setMessage(message)
 			.setIcon(android.R.drawable.ic_dialog_alert)
@@ -286,8 +285,8 @@ public class MainActivity extends Activity {
 		}
 
 		private boolean exitAsFirstTimbrum(ArrayList<RecordTimbratura> report) {
-			return report.isEmpty() && TimbraturaRequest.VERSO_USCITA.equals(versoTimbratura);
-		}
+            return report.isEmpty() && VersoTimbratura.USCITA.equals(versoTimbratura);
+        }
 
 		@Override
 		protected void onProgressUpdate(String... values) {
@@ -297,16 +296,16 @@ public class MainActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<RecordTimbratura> result) {
-			progressDialog.dismiss();
+        protected void onPostExecute(Report result) {
+            progressDialog.dismiss();
 			remainingLabel.setText(getString(R.string.remaining));
             serverTimeText.setText(new SimpleDateFormat("HH:mm").format(now));
 			if (result == null) {
 				Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
 				return;
 			}
-			updateView(result);
-		}
+            updateView(result.getTimbrature());
+        }
 
 		private void updateView(ArrayList<RecordTimbratura> result) {
 			if (result.size() == 0) {
@@ -315,8 +314,8 @@ public class MainActivity extends Activity {
 			} else {
 				listView.setAdapter(new ArrayAdapter<RecordTimbratura>(MainActivity.this, R.layout.row, R.id.textViewList, result));
 
-				ReportUtils logRecords = new ReportUtils(result);
-				if (logRecords.validate()) {
+                ReportUtils logRecords = new ReportUtils(result, now);
+                if (logRecords.validate()) {
 					long worked = logRecords.getWorkedTime();
 					long remaining = logRecords.getRemainingTime(timbrumPreferences.getTimeToWork());
 					workedText.setText(formatTime(worked));

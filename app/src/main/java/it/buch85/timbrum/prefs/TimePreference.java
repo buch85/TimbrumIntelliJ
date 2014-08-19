@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import it.buch85.timbrum.MainActivity;
 
 public class TimePreference extends DialogPreference {
-    private Calendar calendar;
+    private Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GTM+00"));
     private TimePicker picker = null;
 
     public TimePreference(Context ctxt) {
@@ -20,7 +21,7 @@ public class TimePreference extends DialogPreference {
     }
 
     public TimePreference(Context ctxt, AttributeSet attrs) {
-        this(ctxt, attrs,  android.R.attr.editTextPreferenceStyle);
+        this(ctxt, attrs, android.R.attr.editTextPreferenceStyle);
     }
 
     public TimePreference(Context ctxt, AttributeSet attrs, int defStyle) {
@@ -28,7 +29,7 @@ public class TimePreference extends DialogPreference {
 
         setPositiveButtonText(android.R.string.ok);
         setNegativeButtonText(android.R.string.cancel);
-        calendar =Calendar.getInstance();
+
     }
 
     @Override
@@ -37,12 +38,12 @@ public class TimePreference extends DialogPreference {
         picker.setIs24HourView(true);
         return (picker);
     }
-    
+
     @Override
     protected void onBindDialogView(View v) {
         super.onBindDialogView(v);
 
-        picker.setCurrentHour(calendar.get(Calendar.HOUR)-1);
+        picker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
         picker.setCurrentMinute(calendar.get(Calendar.MINUTE));
     }
 
@@ -51,11 +52,11 @@ public class TimePreference extends DialogPreference {
         super.onDialogClosed(positiveResult);
 
         if (positiveResult) {
-        	int hour=picker.getCurrentHour();
-        	int minute=picker.getCurrentMinute() + (hour*60);
-        	int seconds = minute*60;
-        	long millis=seconds*1000;
-        	calendar.setTimeInMillis(millis);
+            int hour = picker.getCurrentHour();
+            int minute = picker.getCurrentMinute() + (hour * 60);
+            int seconds = minute * 60;
+            long millis = seconds * 1000;
+            calendar.setTimeInMillis(millis);
             setSummary(getSummary());
             if (callChangeListener(millis)) {
                 persistLong(millis);

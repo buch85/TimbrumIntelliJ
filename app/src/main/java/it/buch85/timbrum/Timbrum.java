@@ -8,12 +8,10 @@ import org.apache.http.protocol.BasicHttpContext;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 
 import it.buch85.timbrum.request.LoginRequest;
 import it.buch85.timbrum.request.LoginRequest.LoginResult;
-import it.buch85.timbrum.request.RecordTimbratura;
 import it.buch85.timbrum.request.ReportRequest;
 import it.buch85.timbrum.request.ServerTimeRequest;
 import it.buch85.timbrum.request.TimbraturaRequest;
@@ -46,10 +44,10 @@ public class Timbrum {
         context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
 
-    public ArrayList<RecordTimbratura> getReport(Date date) throws Exception {
+    public Report getReport(Date date) throws Exception {
         ReportRequest report = new ReportRequest( httpClient,context);
         report.setUrl(host+SQL_DATA_PROVIDER_URL);
-        return report.getTimbrature(date);
+        return new Report(report.getTimbrature(date));
     }
 
     public Date now() throws IOException, ParseException {
@@ -67,10 +65,10 @@ public class Timbrum {
         return login.submit();
     }
 
-    public void timbra(String verso) throws IOException {
+    public void timbra(VersoTimbratura verso) throws IOException {
         TimbraturaRequest timbratura = new TimbraturaRequest(httpClient,context);
         timbratura.setUrl(host+TIMBRUS_URL);
-        if (TimbraturaRequest.VERSO_ENTRATA.equals(verso)) {
+        if (VersoTimbratura.ENTRATA.equals(verso)) {
            timbratura.entrata();
         } else {
            timbratura.uscita();

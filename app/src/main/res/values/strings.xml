@@ -10,6 +10,16 @@
     <string name="pref_password_summary">Password used to login to HR Portal</string>
     <string name="pref_worktime">Time to work</string>
     <string name="pref_worktime_summary">Usual work hours and minutes</string>
+    <string name="pref_lunchtime_start">Lunchtime Start</string>
+    <string name="pref_lunchtime_start_summary">Time when you can go to lunch</string>
+    <string name="pref_lunchtime_end">Lunchtime End</string>
+    <string name="pref_lunchtime_end_summary">Time to get back to work</string>
+    <string name="pref_lunchtime_min_duration">Lunchtime duration</string>
+    <string name="pref_lunchtime_min_duration_summary">Minimum duration of the lunch</string>
+    <string name="pref_pause_min_duration">Pause duration</string>
+    <string name="pref_pause_min_duration_summary">Minimum duration for a pause</string>
+
+
     <string name="button_enter">Enter</string>
     <string name="button_exit">Exit</string>
     <string name="textview_todaysLog">Today\'s Log</string>
@@ -29,14 +39,16 @@
     <string name="n_a">N/A</string>
     <string name="remaining">Remaining</string>
     <string name="exceeding">Exceeding</string>
-    
+
     <string name="end_of_work_title">Work time is over</string>
     <string name="end_of_work_message">You can now sign-out</string>
-    
-    
+
+
     <string name="confirm_entry_title">Entry Confirmation</string>
     <string name="confirm_exit_title">Exit Confirmation</string>
     <string name="confirm_entry_message">Are you sure you want to sign-in?</string>
     <string name="confirm_exit_message">Are you sure you want to sign-out?</string>
     <string name="server_time">Server Time</string>
+
+
 </resources>

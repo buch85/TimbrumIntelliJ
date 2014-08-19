@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,6 +18,10 @@ public class WorkdayTest {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private MyClock myClock = new MyClock();
     private Workday workday;
+
+    public WorkdayTest() {
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GTM+00"));
+    }
 
     @Before
     public void setUp() throws Exception {

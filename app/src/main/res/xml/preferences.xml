@@ -4,23 +4,39 @@
         android:key="pref_host"
         android:title="@string/pref_host"
         android:summary="@string/pref_host_summary"
-        android:defaultValue="https://saas.hrzucchetti.it/hrpdefault/"
-    />
+        android:defaultValue="https://saas.hrzucchetti.it/hrpdefault/" />
     <EditTextPreference
         android:key="pref_username"
         android:title="@string/pref_username"
-        android:summary="@string/pref_username_summary"
-    />
+        android:summary="@string/pref_username_summary" />
     <EditTextPreference
         android:key="pref_password"
         android:title="@string/pref_password"
         android:summary="@string/pref_password_summary"
-        android:inputType="textPassword"
-    />
+        android:inputType="textPassword" />
     <it.buch85.timbrum.prefs.TimePreference
         android:key="pref_worktime"
         android:title="@string/pref_worktime"
         android:summary="@string/pref_worktime_summary"
-		android:defaultValue="28800000"
-		 />
+        android:defaultValue="28800000" />
+    <it.buch85.timbrum.prefs.TimePreference
+        android:key="pref_lunchtime_start"
+        android:title="@string/pref_lunchtime_start"
+        android:summary="@string/pref_lunchtime_start_summary"
+        android:defaultValue="45000000" />
+    <it.buch85.timbrum.prefs.TimePreference
+        android:key="pref_lunchtime_end"
+        android:title="@string/pref_lunchtime_end"
+        android:summary="@string/pref_lunchtime_end_summary"
+        android:defaultValue="52200000" />
+    <it.buch85.timbrum.prefs.TimePreference
+        android:key="pref_lunchtime_min_duration"
+        android:title="@string/pref_lunchtime_min_duration"
+        android:summary="@string/pref_lunchtime_min_duration_summary"
+        android:defaultValue="180000" />
+    <it.buch85.timbrum.prefs.TimePreference
+        android:key="pref_pause_min_duration"
+        android:title="@string/pref_pause_min_duration"
+        android:summary="@string/pref_pause_min_duration_summary"
+        android:defaultValue="90000" />
 </PreferenceScreen>

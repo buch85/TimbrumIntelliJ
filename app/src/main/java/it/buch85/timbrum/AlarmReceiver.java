@@ -12,12 +12,9 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import it.buch85.timbrum.prefs.TimbrumPreferences;
-import it.buch85.timbrum.request.RecordTimbratura;
-
 
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -35,9 +32,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 				protected Void doInBackground(Void... params) {
 					try {
 						if (timbrum.login().isSuccess()) {
-							ArrayList<RecordTimbratura> timbrumRecords = timbrum.getReport(new Date());
-							ReportUtils reportUtils = new ReportUtils(timbrumRecords);
-							if (reportUtils.validate()&& reportUtils.stillHaveToExit()) {
+                            Date now = timbrum.now();
+                            Report report = timbrum.getReport(new Date());
+                            ReportUtils reportUtils = new ReportUtils(report.getTimbrature(), now);
+                            if (reportUtils.validate()&& reportUtils.stillHaveToExit()) {
 								long remaining = reportUtils.getRemainingTime(preferences.getTimeToWork());
 								if (remaining > 0) {
 									new EndOfWorkAlarm(context).set(remaining);

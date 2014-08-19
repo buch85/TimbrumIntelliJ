@@ -1,11 +1,9 @@
-package it.buch85.timbrum.request;
+package it.buch85.timbrum;
 
 
 import java.util.Calendar;
 import java.util.Date;
-
-import it.buch85.timbrum.MainActivity;
-import it.buch85.timbrum.R;
+import java.util.TimeZone;
 
 
 public class RecordTimbratura {
@@ -38,14 +36,18 @@ public class RecordTimbratura {
 	public String getTime() {
 		return time;
 	}
-	
-	public String getDirection() {
-		return dir;
-	}
+
+    public VersoTimbratura getDirection() {
+        if (isEntry()) {
+            return VersoTimbratura.ENTRATA;
+        } else {
+            return VersoTimbratura.USCITA;
+        }
+    }
 	
 	public boolean isEntry(){
-		return dir.equals(TimbraturaRequest.VERSO_ENTRATA);
-	}
+        return dir.equals(VersoTimbratura.ENTRATA.getCode());
+    }
 	public boolean isExit(){
 		return !isEntry();
 	}
@@ -55,11 +57,11 @@ public class RecordTimbratura {
 		String[] tokens=time.split(":");
 		String hour=tokens[0];
 		String minutes=tokens[1];
-		Calendar c=Calendar.getInstance();
-		c.setTime(date);
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GTM+00"));
+        c.setTime(date);
 		c.set(Calendar.AM_PM,Calendar.AM);
-		c.set(Calendar.HOUR,Integer.parseInt(hour));
-		c.set(Calendar.MINUTE,Integer.parseInt(minutes));
+        c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+        c.set(Calendar.MINUTE,Integer.parseInt(minutes));
 		c.set(Calendar.SECOND,0);
 		return c.getTime();
 	}
