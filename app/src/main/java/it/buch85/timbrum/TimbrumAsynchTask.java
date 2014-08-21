@@ -59,7 +59,9 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Strin
                 //failed login
                 return null;
             }
-            remoteClock.setRemoteTime(timbrum.now());
+            Date now = timbrum.now();
+            remoteClock.setRemoteTime(now);
+            timbrumView.setNow(now);
             Report report = timbrum.getReport(remoteClock.now);
             if (action.isPunching()) {
                 if (!report.isNextTimbrumValid(action.versoTimbratura)) {
@@ -73,6 +75,7 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Strin
             }
             return report;
         } catch (Exception e) {
+            timbrumView.setErrorMessage(e.getMessage());
             return null;
         }
     }
@@ -93,6 +96,10 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Strin
     @Override
     protected void onPostExecute(Report result) {
         timbrumView.dismissProgress();
+        if (result == null) {
+            timbrumView.showErrorMessage();
+            return;
+        }
         try {
             updateWorkday(result);
             timbrumView.updateView(result, workday);

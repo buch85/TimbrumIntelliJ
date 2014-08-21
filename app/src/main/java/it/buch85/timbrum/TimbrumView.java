@@ -1,5 +1,7 @@
 package it.buch85.timbrum;
 
+import java.util.Date;
+
 import it.maverick.workday.Workday;
 
 /**
@@ -19,4 +21,10 @@ public interface TimbrumView {
     void updateView(Report result);
 
     void updateView(Report result, Workday workday);
+
+    void setErrorMessage(String message);
+
+    void setNow(Date now);
+
+    void showErrorMessage();
 }
