@@ -12,7 +12,7 @@ public interface TimbrumView {
 
     void initProgress();
 
-    void updateProgress(String value);
+    void updateProgress(Integer resourceId);
 
     void dismissProgress();
 
@@ -27,4 +27,6 @@ public interface TimbrumView {
     void setNow(Date now);
 
     void showErrorMessage();
+
+    void setLoginError(String message);
 }

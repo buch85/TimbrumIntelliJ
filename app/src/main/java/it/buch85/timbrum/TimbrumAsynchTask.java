@@ -15,7 +15,7 @@ import it.maverick.workday.Workday;
 /**
  * Created by Marco on 19/08/2014.
  */
-public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, String, Report> {
+public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Integer, Report> {
     private final Timbrum timbrum;
     private final TimbrumPreferences preferences;
     private final TimbrumView timbrumView;
@@ -54,14 +54,16 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Strin
     protected Report doInBackground(Action... actions) {
         Action action = actions[0];
         try {
+            publishProgress(R.string.logging_in);
             LoginRequest.LoginResult loginResult = timbrum.login();
             if (!loginResult.isSuccess()) {
-                //failed login
+                timbrumView.setLoginError(loginResult.getMessage());
                 return null;
             }
             Date now = timbrum.now();
             remoteClock.setRemoteTime(now);
             timbrumView.setNow(now);
+            publishProgress(R.string.loading_logs);
             Report report = timbrum.getReport(remoteClock.now);
             if (action.isPunching()) {
                 if (!report.isNextTimbrumValid(action.versoTimbratura)) {
@@ -70,7 +72,9 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Strin
                         return report;
                     }
                 }
+                publishProgress(R.string.timbrum_in_progress);
                 timbrum.timbra(action.versoTimbratura);
+                publishProgress(R.string.loading_logs);
                 return timbrum.getReport(remoteClock.now);
             }
             return report;
@@ -81,9 +85,9 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Strin
     }
 
     @Override
-    protected void onProgressUpdate(String... values) {
-        for (String value : values) {
-            timbrumView.updateProgress(value);
+    protected void onProgressUpdate(Integer... resourceIds) {
+        for (Integer resourceId : resourceIds) {
+            timbrumView.updateProgress(resourceId);
         }
     }
 

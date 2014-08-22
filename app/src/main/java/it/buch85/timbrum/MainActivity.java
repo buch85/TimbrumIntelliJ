@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -24,35 +23,37 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.CountDownLatch;
 
 import it.buch85.timbrum.prefs.SettingsActivity;
 import it.buch85.timbrum.prefs.TimbrumPreferences;
-import it.buch85.timbrum.request.LoginRequest.LoginResult;
 import it.maverick.workday.Workday;
 
 public class MainActivity extends Activity {
     private TimbrumPreferences timbrumPreferences;
-	private ListView listView;
-	private Button buttonRefresh;
+    private ListView listView;
+    private Button buttonRefresh;
 
-	/** The view to show the ad. */
-	private AdView adView;
-	private TextView workedText;
-	private TextView remainingText;
-	private TextView remainingLabel;
-	private SeekBar seekBar;
-	public static MainActivity instance;
+    /**
+     * The view to show the ad.
+     */
+    private AdView adView;
+    private TextView workedText;
+    private TextView remainingText;
+    private TextView remainingLabel;
+    private SeekBar seekBar;
+    public static MainActivity instance;
     private TextView serverTimeText;
+    private TimbrumTaskView timbrumView;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		instance = this;
-		setContentView(R.layout.activity_main);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        instance = this;
+        setContentView(R.layout.activity_main);
 
         timbrumPreferences = new TimbrumPreferences(PreferenceManager.getDefaultSharedPreferences(this));
         // getSupportFragmentManager().beginTransaction().add(R.id.container,
@@ -63,7 +64,7 @@ public class MainActivity extends Activity {
         workedText = (TextView) findViewById(R.id.textWorked);
         remainingText = (TextView) findViewById(R.id.textRemaining);
         remainingLabel = (TextView) findViewById(R.id.textRemainingLabel);
-        serverTimeText= (TextView) findViewById(R.id.textServerTime);
+        serverTimeText = (TextView) findViewById(R.id.textServerTime);
         seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
@@ -100,97 +101,98 @@ public class MainActivity extends Activity {
             AdRequest adRequest = new AdRequest.Builder().build();
             adView.loadAd(adRequest);
         }
-		enableDisableButtons();
-	}
-
-	protected void refresh() {
-		new TimbrumTask().execute();
-	}
-
-	protected void exit() {
-        new TimbrumTask(VersoTimbratura.USCITA).execute();
-
-	}
-
-	protected void enter() {
-        new TimbrumTask(VersoTimbratura.ENTRATA).execute();
+        timbrumView = new TimbrumTaskView();
+        enableDisableButtons();
     }
 
-	private void enableDisableButtons() {
-		boolean arePreferencesValid = timbrumPreferences.arePreferencesValid();
-		buttonRefresh.setEnabled(arePreferencesValid);
-		seekBar.setEnabled(arePreferencesValid);
-	}
+    protected void refresh() {
+        new TimbrumAsynchTask(timbrumPreferences, timbrumView).refresh();
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+    protected void exit() {
+        new TimbrumAsynchTask(timbrumPreferences, timbrumView).exit();
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (adView != null) {
-			adView.resume();
-		}
-		enableDisableButtons();
-	}
+    protected void enter() {
+        new TimbrumAsynchTask(timbrumPreferences, timbrumView).enter();
+    }
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		if (!paused && timbrumPreferences.arePreferencesValid()) {
-			new TimbrumTask().execute();
-		}
-	}
+    private void enableDisableButtons() {
+        boolean arePreferencesValid = timbrumPreferences.arePreferencesValid();
+        buttonRefresh.setEnabled(arePreferencesValid);
+        seekBar.setEnabled(arePreferencesValid);
+    }
 
-	boolean paused = false;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-	@Override
-	protected void onPause() {
-		paused = true;
-		if (adView != null) {
-			adView.pause();
-		}
-		super.onPause();
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+        enableDisableButtons();
+    }
 
-	/** Called before the activity is destroyed. */
-	@Override
-	public void onDestroy() {
-		// Destroy the AdView.
-		if (adView != null) {
-			adView.destroy();
-		}
-		super.onDestroy();
-	}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!paused && timbrumPreferences.arePreferencesValid()) {
+            new TimbrumAsynchTask(timbrumPreferences, timbrumView).refresh();
+        }
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			startActivity(new Intent(this, SettingsActivity.class));
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    boolean paused = false;
 
-	public static String formatTime(long millis) {
-		long minute = (long) ((millis / (1000d * 60)) % 60);
-		long hour = (long) ((millis / (1000d * 60 * 60)) % 24);
+    @Override
+    protected void onPause() {
+        paused = true;
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
 
-		String time = String.format(Locale.ENGLISH, "%02d:%02d", hour, minute);
-		return time;
-	}
+    /**
+     * Called before the activity is destroyed.
+     */
+    @Override
+    public void onDestroy() {
+        // Destroy the AdView.
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static String formatTime(long millis) {
+        long minute = (long) ((millis / (1000d * 60)) % 60);
+        long hour = (long) ((millis / (1000d * 60 * 60)) % 24);
+
+        String time = String.format(Locale.ENGLISH, "%02d:%02d", hour, minute);
+        return time;
+    }
 
     private final class TimbrumTaskView implements TimbrumView {
         private Date now;
-
         private final ProgressDialog progressDialog;
         private String errorMessage;
 
@@ -214,7 +216,7 @@ public class MainActivity extends Activity {
                     latch.countDown();
                 }
             };
-            MainActivity.this.runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     createConfirmationDialog(direction, onClickListener).show();
@@ -247,8 +249,8 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public void updateProgress(String value) {
-            progressDialog.setMessage(value);
+        public void updateProgress(Integer resourceId) {
+            progressDialog.setMessage(getString(resourceId));
         }
 
         @Override
@@ -258,6 +260,8 @@ public class MainActivity extends Activity {
 
         @Override
         public void resetView() {
+            now = null;
+            errorMessage = null;
             listView.setAdapter(null);
             remainingLabel.setText(getString(R.string.remaining));
             serverTimeText.setText(getString(R.string.n_a));
@@ -267,7 +271,9 @@ public class MainActivity extends Activity {
 
         @Override
         public void updateView(Report result) {
-            serverTimeText.setText(new SimpleDateFormat("HH:mm").format(now));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00"));
+            serverTimeText.setText(simpleDateFormat.format(now));
             if (result.getTimbrature().size() != 0) {
                 listView.setAdapter(new ArrayAdapter<RecordTimbratura>(MainActivity.this, R.layout.row, R.id.textViewList, result.getTimbrature()));
             }
@@ -276,7 +282,16 @@ public class MainActivity extends Activity {
         @Override
         public void updateView(Report result, Workday workday) {
             updateView(result);
-
+            long worked = workday.getWorkedTime();
+            long remaining = workday.getRemainingTime();
+            workedText.setText(formatTime(worked));
+            if (remaining < 0) {
+                remainingLabel.setText(getString(R.string.exceeding));
+                remainingText.setText(formatTime(-remaining));
+            } else {
+                remainingText.setText(formatTime(remaining));
+            }
+            new EndOfWorkAlarm(getApplicationContext()).set(remaining < 0 ? 0 : remaining);
         }
 
         @Override
@@ -287,6 +302,11 @@ public class MainActivity extends Activity {
         @Override
         public void showErrorMessage() {
             Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void setLoginError(String loginErrorMessage) {
+            setErrorMessage(getString(R.string.login_error) + loginErrorMessage);
         }
 
         private AlertDialog createConfirmationDialog(VersoTimbratura direction, DialogInterface.OnClickListener onClickListener) {
@@ -306,144 +326,4 @@ public class MainActivity extends Activity {
             this.now = now;
         }
     }
-
-    private final class TimbrumTask extends AsyncTask<String, String, Report> {
-        VersoTimbratura versoTimbratura = null;
-        private ProgressDialog progressDialog;
-
-		String message = "";
-		private Timbrum timbrum;
-		protected boolean isConfirmed=true;
-        private Date now;
-
-        public TimbrumTask() {
-			this(null);
-		}
-
-        public TimbrumTask(VersoTimbratura timbratura) {
-            this.versoTimbratura = timbratura;
-			progressDialog = new ProgressDialog(MainActivity.this);
-			progressDialog.setCancelable(false);
-			progressDialog.setCanceledOnTouchOutside(false);
-			progressDialog.setTitle(getString(R.string.loading));
-			progressDialog.setMessage(getString(R.string.please_wait));
-			timbrum = new Timbrum(timbrumPreferences.getHost(), timbrumPreferences.getUsername(), timbrumPreferences.getPassword());
-		}
-
-		@Override
-		protected void onPreExecute() {
-			listView.setAdapter(null);
-			progressDialog.show();
-		}
-
-		@Override
-        protected Report doInBackground(String... params) {
-            try {
-				publishProgress( getString(R.string.logging_in));
-				LoginResult loginResult = timbrum.login();
-				if (loginResult.isSuccess()) {
-					now = timbrum.now();
-					if (versoTimbratura != null) {
-						publishProgress(getString(R.string.loading_logs));
-                        Report report = timbrum.getReport(now);
-                        if (!report.isNextTimbrumValid(versoTimbratura)) {
-                            isConfirmed=false;
-							final CountDownLatch latch=new CountDownLatch(1);
-							final DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
-							    public void onClick(DialogInterface dialog, int whichButton) {
-                                    isConfirmed = whichButton == DialogInterface.BUTTON_POSITIVE;
-							    	dialog.dismiss();
-							    	latch.countDown();
-							    }};
-							MainActivity.this.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									createConfirmationDialog(versoTimbratura,onClickListener).show();
-								}
-							});
-							latch.await();
-
-                        }
-						if(isConfirmed){
-							publishProgress(getString(R.string.timbrum_in_progress));
-							timbrum.timbra(versoTimbratura);
-						}else{
-							return report;
-						}
-					}
-					publishProgress(getString(R.string.loading_logs));
-					return timbrum.getReport(now);
-				} else {
-					message = getString(R.string.login_error) + loginResult.getMessage();
-				}
-			} catch (Exception e) {
-				message = getString(R.string.error) + e.getMessage();
-			}
-			return null;
-		}
-
-        private AlertDialog createConfirmationDialog(VersoTimbratura direction, DialogInterface.OnClickListener onClickListener) {
-            String title = VersoTimbratura.ENTRATA.equals(direction) ? getString(R.string.confirm_entry_title) : getString(R.string.confirm_exit_title);
-            String message = VersoTimbratura.ENTRATA.equals(direction) ? getString(R.string.confirm_entry_message) : getString(R.string.confirm_exit_message);
-            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-			.setTitle(title)
-			.setMessage(message)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setPositiveButton(android.R.string.yes, onClickListener)
-			.setNegativeButton(android.R.string.no, onClickListener).create();
-			return dialog;
-		}
-
-		@Override
-		protected void onProgressUpdate(String... values) {
-			for (String value : values) {
-				progressDialog.setMessage(value);
-			}
-		}
-
-		@Override
-        protected void onPostExecute(Report result) {
-            progressDialog.dismiss();
-			remainingLabel.setText(getString(R.string.remaining));
-			if (result == null) {
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            updateView(result.getTimbrature());
-        }
-
-		private void updateView(ArrayList<RecordTimbratura> result) {
-            serverTimeText.setText(new SimpleDateFormat("HH:mm").format(now));
-            if (result.size() == 0) {
-				workedText.setText(getString(R.string.n_a));
-				remainingText.setText(getString(R.string.n_a));
-			} else {
-				listView.setAdapter(new ArrayAdapter<RecordTimbratura>(MainActivity.this, R.layout.row, R.id.textViewList, result));
-
-                ReportUtils logRecords = new ReportUtils(result, now);
-                if (logRecords.validate()) {
-					long worked = logRecords.getWorkedTime();
-					long remaining = logRecords.getRemainingTime(timbrumPreferences.getTimeToWork());
-					workedText.setText(formatTime(worked));
-					if (remaining < 0) {
-						remainingLabel.setText(getString(R.string.exceeding));
-						remainingText.setText(formatTime(-remaining));
-					} else {
-						remainingText.setText(formatTime(remaining));
-					}
-					new EndOfWorkAlarm(getApplicationContext()).set(remaining<0?0:remaining);
-				} else {
-					workedText.setText(getString(R.string.n_a));
-					remainingText.setText(getString(R.string.n_a));
-				}
-			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			cancel(true);
-			progressDialog.dismiss();
-		}
-	}
 }

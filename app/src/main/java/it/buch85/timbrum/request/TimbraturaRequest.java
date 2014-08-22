@@ -41,6 +41,6 @@ public class TimbraturaRequest extends AbstractRequest {
     }
 
     public void uscita() throws IOException {
-        timbraVerso(VersoTimbratura.ENTRATA);
+        timbraVerso(VersoTimbratura.USCITA);
     }
 }
