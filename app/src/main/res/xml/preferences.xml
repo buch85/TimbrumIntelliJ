@@ -33,10 +33,10 @@
         android:key="pref_lunchtime_min_duration"
         android:title="@string/pref_lunchtime_min_duration"
         android:summary="@string/pref_lunchtime_min_duration_summary"
-        android:defaultValue="180000" />
+        android:defaultValue="1800000" />
     <it.buch85.timbrum.prefs.TimePreference
         android:key="pref_pause_min_duration"
         android:title="@string/pref_pause_min_duration"
         android:summary="@string/pref_pause_min_duration_summary"
-        android:defaultValue="90000" />
+        android:defaultValue="900000" />
 </PreferenceScreen>
