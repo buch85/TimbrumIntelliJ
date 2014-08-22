@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="it.buch85.timbrum.MainActivity"
-    tools:ignore="MergeRootFrame" >
+    tools:ignore="MergeRootFrame">
 
     <RelativeLayout
         android:id="@+id/summaryLayout"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp" >
+        android:layout_marginLeft="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -78,6 +78,25 @@
             android:text="@string/n_a"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exit_time"
+            android:layout_marginTop="20dp"
+            android:id="@+id/textView5"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textRemaining" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/n_a"
+            android:id="@+id/textExitTime"
+            android:layout_below="@+id/textView5"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentLeft="true" />
+
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -106,6 +125,7 @@
             android:layout_alignParentLeft="true"
             android:paddingBottom="2dip"
             android:paddingLeft="5dip"
+            android:paddingRight="5dip"
             android:paddingTop="2dip"
             android:text="@string/textview_todaysLog"
             android:textAppearance="?android:attr/listSeparatorTextViewStyle"
@@ -116,8 +136,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/buttonRefresh" >
-        </ListView>
+            android:layout_below="@+id/buttonRefresh"></ListView>
     </RelativeLayout>
 
     <com.google.android.gms.ads.AdView
@@ -127,8 +146,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         app:adSize="BANNER"
-        app:adUnitId="@string/admobid">
-    </com.google.android.gms.ads.AdView>
+        app:adUnitId="@string/admobid"></com.google.android.gms.ads.AdView>
 
     <it.buch85.timbrum.NoTapSeekBar
         android:id="@+id/seekBar1"

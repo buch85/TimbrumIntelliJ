@@ -2,13 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/imageView"
+        android:adjustViewBounds="false"
+        android:src="@drawable/e"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/textViewList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" android:padding="10dip"
+        android:padding="10dip"
         android:textSize="18sp"/>
 
 </LinearLayout>

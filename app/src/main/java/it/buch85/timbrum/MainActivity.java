@@ -11,8 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -23,7 +25,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.CountDownLatch;
@@ -45,14 +49,13 @@ public class MainActivity extends Activity {
     private TextView remainingText;
     private TextView remainingLabel;
     private SeekBar seekBar;
-    public static MainActivity instance;
     private TextView serverTimeText;
     private TimbrumTaskView timbrumView;
+    private TextView exitTimeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        instance = this;
         setContentView(R.layout.activity_main);
 
         timbrumPreferences = new TimbrumPreferences(PreferenceManager.getDefaultSharedPreferences(this));
@@ -65,6 +68,7 @@ public class MainActivity extends Activity {
         remainingText = (TextView) findViewById(R.id.textRemaining);
         remainingLabel = (TextView) findViewById(R.id.textRemainingLabel);
         serverTimeText = (TextView) findViewById(R.id.textServerTime);
+        exitTimeText = (TextView) findViewById(R.id.textExitTime);
         seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
@@ -195,8 +199,11 @@ public class MainActivity extends Activity {
         private Date now;
         private final ProgressDialog progressDialog;
         private String errorMessage;
+        private SimpleDateFormat simpleDateFormat;
 
         private TimbrumTaskView() {
+            simpleDateFormat = new SimpleDateFormat("HH:mm");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00"));
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
@@ -267,15 +274,14 @@ public class MainActivity extends Activity {
             serverTimeText.setText(getString(R.string.n_a));
             workedText.setText(getString(R.string.n_a));
             remainingText.setText(getString(R.string.n_a));
+            exitTimeText.setText(getString(R.string.n_a));
         }
 
         @Override
         public void updateView(Report result) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00"));
             serverTimeText.setText(simpleDateFormat.format(now));
             if (result.getTimbrature().size() != 0) {
-                listView.setAdapter(new ArrayAdapter<RecordTimbratura>(MainActivity.this, R.layout.row, R.id.textViewList, result.getTimbrature()));
+                listView.setAdapter(new RecordListAdapter(result.getTimbrature()));
             }
         }
 
@@ -284,14 +290,19 @@ public class MainActivity extends Activity {
             updateView(result);
             long worked = workday.getWorkedTime();
             long remaining = workday.getRemainingTime();
+            Calendar instance1 = Calendar.getInstance(TimeZone.getTimeZone("GTM+00"));
+            instance1.setTime(now);
+            instance1.setTimeInMillis(instance1.getTimeInMillis() + remaining);
             workedText.setText(formatTime(worked));
+            exitTimeText.setText(simpleDateFormat.format(instance1.getTime()));
             if (remaining < 0) {
                 remainingLabel.setText(getString(R.string.exceeding));
                 remainingText.setText(formatTime(-remaining));
+
             } else {
                 remainingText.setText(formatTime(remaining));
+                new EndOfWorkAlarm(getApplicationContext()).set(remaining);
             }
-            new EndOfWorkAlarm(getApplicationContext()).set(remaining < 0 ? 0 : remaining);
         }
 
         @Override
@@ -324,6 +335,31 @@ public class MainActivity extends Activity {
         @Override
         public void setNow(Date now) {
             this.now = now;
+        }
+    }
+
+    private class RecordListAdapter extends ArrayAdapter<RecordTimbratura> {
+
+        public RecordListAdapter(List<RecordTimbratura> objects) {
+            super(MainActivity.this, R.layout.row, R.id.textViewList, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            RecordTimbratura item = getItem(position);
+            if (item != null) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+                TextView textView = (TextView) view.findViewById(R.id.textViewList);
+                if (item.isEntry()) {
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.e));
+                    textView.setText(item.getTime() + " " + getString(R.string.entry));
+                } else {
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.u));
+                    textView.setText(item.getTime() + " " + getString(R.string.exit));
+                }
+            }
+            return view;
         }
     }
 }

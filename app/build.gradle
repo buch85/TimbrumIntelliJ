@@ -7,8 +7,8 @@ android {
         applicationId 'it.buch85.timbrum'
         minSdkVersion 9
         targetSdkVersion 19
-        versionCode 12
-        versionName '1.3'
+        versionCode 13
+        versionName '1.4'
     }
     buildTypes {
         release {

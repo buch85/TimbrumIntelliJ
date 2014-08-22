@@ -33,7 +33,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 					try {
 						if (timbrum.login().isSuccess()) {
                             Date now = timbrum.now();
-                            Report report = timbrum.getReport(new Date());
+                            Report report = timbrum.getReport(now);
                             ReportUtils reportUtils = new ReportUtils(report.getTimbrature(), now);
                             if (reportUtils.validate()&& reportUtils.stillHaveToExit()) {
 								long remaining = reportUtils.getRemainingTime(preferences.getTimeToWork());
@@ -50,7 +50,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 					return null;
 				}
 			}.execute();
-
 		}
 
 	}
