@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 	}
 
 	protected void exit() {
-        new TimbrumTask(VersoTimbratura.ENTRATA).execute();
+        new TimbrumTask(VersoTimbratura.USCITA).execute();
 
 	}
 
