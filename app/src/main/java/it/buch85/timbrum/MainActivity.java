@@ -288,17 +288,19 @@ public class MainActivity extends Activity {
         @Override
         public void updateView(Report result, Workday workday) {
             updateView(result);
+            if (result.getTimbrature().size() == 0) {
+                return;
+            }
             long worked = workday.getWorkedTime();
             long remaining = workday.getRemainingTime();
-            Calendar instance1 = Calendar.getInstance(TimeZone.getTimeZone("GTM+00"));
-            instance1.setTime(now);
-            instance1.setTimeInMillis(instance1.getTimeInMillis() + remaining);
+            Calendar instance = Calendar.getInstance(TimeZone.getTimeZone("GTM+00"));
+            instance.setTime(now);
+            instance.setTimeInMillis(instance.getTimeInMillis() + remaining);
             workedText.setText(formatTime(worked));
-            exitTimeText.setText(simpleDateFormat.format(instance1.getTime()));
+            exitTimeText.setText(simpleDateFormat.format(instance.getTime()));
             if (remaining < 0) {
                 remainingLabel.setText(getString(R.string.exceeding));
                 remainingText.setText(formatTime(-remaining));
-
             } else {
                 remainingText.setText(formatTime(remaining));
                 new EndOfWorkAlarm(getApplicationContext()).set(remaining);
