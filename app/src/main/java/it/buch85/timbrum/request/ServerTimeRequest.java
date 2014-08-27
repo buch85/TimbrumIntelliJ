@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -33,8 +34,13 @@ public class ServerTimeRequest extends AbstractRequest {
         String date=responseString.substring(start,end);
         SimpleDateFormat parserSDF=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         parserSDF.setTimeZone(TimeZone.getTimeZone("GMT+00"));
-        return parserSDF.parse(date);
-	}
+        Date parsed = parserSDF.parse(date);
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+00"));
+        calendar.setTime(parsed);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
 	
 	
 

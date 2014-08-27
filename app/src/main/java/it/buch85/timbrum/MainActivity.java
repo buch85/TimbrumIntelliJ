@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+00"));
         setContentView(R.layout.activity_main);
 
         timbrumPreferences = new TimbrumPreferences(PreferenceManager.getDefaultSharedPreferences(this));
