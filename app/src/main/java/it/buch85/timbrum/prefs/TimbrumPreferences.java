@@ -50,10 +50,10 @@ public class TimbrumPreferences {
     }
 
     public long getMinLunchtimeDuration() {
-        return sharedPrefs.getLong("pref_lunchtime_min_duration", 180000);
+        return sharedPrefs.getLong("pref_lunchtime_min_duration", 1800000);
     }
 
     public long getMinPauseDuration() {
-        return sharedPrefs.getLong("pref_pause_min_duration", 90000);
+        return sharedPrefs.getLong("pref_pause_min_duration", 900000);
     }
 }
