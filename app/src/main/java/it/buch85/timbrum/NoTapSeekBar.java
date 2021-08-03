@@ -4,9 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.SeekBar;
 
-public class NoTapSeekBar extends SeekBar {
+import androidx.appcompat.widget.AppCompatSeekBar;
+
+public class NoTapSeekBar extends AppCompatSeekBar {
 	private Drawable mThumb;
 
 	public NoTapSeekBar(Context context) {

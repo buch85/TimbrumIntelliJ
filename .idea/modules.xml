@@ -3,9 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TimbrumIntelliJ.iml" filepath="$PROJECT_DIR$/TimbrumIntelliJ.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Workday/Workday.iml" filepath="$PROJECT_DIR$/Workday/Workday.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Workday/TimbrumIntelliJ.Workday.iml" filepath="$PROJECT_DIR$/.idea/modules/Workday/TimbrumIntelliJ.Workday.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/TimbrumIntelliJ.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/TimbrumIntelliJ.app.iml" />
     </modules>
   </component>
 </project>
-

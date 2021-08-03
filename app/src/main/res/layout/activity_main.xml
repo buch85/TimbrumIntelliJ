@@ -159,6 +159,7 @@
         android:max="100"
         android:mirrorForRtl="false"
         android:progress="50"
+        android:thumb="@drawable/seekbar_drawable_thumb"
         android:progressDrawable="@drawable/seekbar_progress" />
 
     <TextView
