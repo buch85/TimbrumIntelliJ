@@ -18,13 +18,13 @@
     <string name="pref_lunchtime_min_duration_summary">Minimum duration of the lunch</string>
     <string name="pref_pause_min_duration">Pause duration</string>
     <string name="pref_pause_min_duration_summary">Minimum duration for a pause</string>
-
-
+    
     <string name="button_enter">Enter</string>
     <string name="button_exit">Exit</string>
     <string name="textview_todaysLog">Today\'s Log</string>
     <string name="refresh">Refresh</string>
     <string name="logging_in">Logging in...</string>
+    <string name="loading_workspace">Loading workspace...</string>
     <string name="timbrum_in_progress">Timbrum in progress...</string>
     <string name="entry">Entry</string>
     <string name="exit">Exit</string>
@@ -43,7 +43,6 @@
     <string name="end_of_work_title">Work time is over</string>
     <string name="end_of_work_message">You can now sign-out</string>
 
-
     <string name="confirm_entry_title">Entry Confirmation</string>
     <string name="confirm_exit_title">Exit Confirmation</string>
     <string name="confirm_entry_message">Are you sure you want to sign-in?</string>
@@ -51,5 +50,9 @@
     <string name="server_time">Server Time</string>
     <string name="exit_time">Exit Time</string>
 
+    <string name="edit_settings_summary">Change Host, Credentials and other settings</string>
+    <string name="edit_settings_header">Edit Settings</string>
+
+    <string name="admobid">ca-app-pub-1177088523664187/5689192882</string>
 
 </resources>

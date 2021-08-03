@@ -1,6 +1,5 @@
 package it.buch85.timbrum;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,6 +20,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -36,7 +37,7 @@ import it.buch85.timbrum.prefs.SettingsActivity;
 import it.buch85.timbrum.prefs.TimbrumPreferences;
 import it.maverick.workday.Workday;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     private TimbrumPreferences timbrumPreferences;
     private ListView listView;
     private Button buttonRefresh;

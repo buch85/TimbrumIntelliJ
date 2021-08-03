@@ -10,7 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 import java.util.Date;
 
@@ -26,7 +26,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 					PreferenceManager.getDefaultSharedPreferences(context));
 			final Timbrum timbrum = new Timbrum(preferences.getHost(),
 					preferences.getUsername(), preferences.getPassword());
-
+//todo
 			new AsyncTask<Void,Void,Void>() {
 				@Override
 				protected Void doInBackground(Void... params) {
