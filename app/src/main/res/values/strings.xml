@@ -50,9 +50,13 @@
     <string name="server_time">Server Time</string>
     <string name="exit_time">Exit Time</string>
 
-    <string name="edit_settings_summary">Change Host, Credentials and other settings</string>
     <string name="edit_settings_header">Edit Settings</string>
+    <string name="edit_settings_summary">Change Host, Credentials and other settings</string>
 
     <string name="admobid">ca-app-pub-1177088523664187/5689192882</string>
+
+    <string name="edit_developer_settings_header">Developer settings</string>
+    <string name="pref_send_timbratura_id">Send Timbratura id</string>
+    <string name="pref_variable_name_timbratura_id">Timbratura id variable name</string>
 
 </resources>

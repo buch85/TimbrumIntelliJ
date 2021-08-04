@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="timbratura_id_flag"
+        android:title="@string/pref_send_timbratura_id"
+        android:defaultValue="true" />
+    />
+    <EditTextPreference
+        android:key="timbratura_id_variable"
+        android:title="@string/pref_variable_name_timbratura_id"
+        android:defaultValue="splinker10.m_cID" />
+</PreferenceScreen>
