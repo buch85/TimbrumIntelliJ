@@ -1,0 +1,15 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="it.buch85.timbrum.prefs.SettingsActivity$UserPreferenceFragment"
+        android:summary="@string/edit_settings_summary"
+        android:title="@string/edit_settings_header">
+    </header>
+
+    <header
+        android:fragment="it.buch85.timbrum.prefs.SettingsActivity$DeveloperPreferenceFragment"
+        android:title="@string/edit_developer_settings_header">
+    </header>
+
+
+</preference-headers>

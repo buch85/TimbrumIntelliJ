@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import it.buch85.timbrum.prefs.TimbrumPreferences;
-import it.buch85.timbrum.request.LoginRequest;
+import it.buch85.timbrum.request.LoginResult;
 import it.maverick.workday.Clock;
 import it.maverick.workday.InvalidClockingSequenceException;
 import it.maverick.workday.Workday;
@@ -15,6 +15,8 @@ import it.maverick.workday.Workday;
 /**
  * Created by Marco on 19/08/2014.
  */
+
+//todo
 public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Integer, Report> {
     private final Timbrum timbrum;
     private final TimbrumPreferences preferences;
@@ -55,7 +57,7 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Integ
         Action action = actions[0];
         try {
             publishProgress(R.string.logging_in);
-            LoginRequest.LoginResult loginResult = timbrum.login();
+            LoginResult loginResult = timbrum.login();
             if (!loginResult.isSuccess()) {
                 timbrumView.setLoginError(loginResult.getMessage());
                 return null;
@@ -72,8 +74,10 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Integ
                         return report;
                     }
                 }
+                publishProgress(R.string.loading_workspace);
+                String timbraturaId = timbrum.loadTimbraturaId();
                 publishProgress(R.string.timbrum_in_progress);
-                timbrum.timbra(action.versoTimbratura);
+                timbrum.timbra(action.versoTimbratura, timbraturaId);
                 publishProgress(R.string.loading_logs);
                 return timbrum.getReport(remoteClock.now);
             }

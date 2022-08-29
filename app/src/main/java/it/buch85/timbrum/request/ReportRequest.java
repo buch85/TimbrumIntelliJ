@@ -1,57 +1,55 @@
 package it.buch85.timbrum.request;
 
-
-import android.annotation.SuppressLint;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 
 import it.buch85.timbrum.RecordTimbratura;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
-/**
- * Created by mbacer on 16/04/14.
- */
-public class ReportRequest extends AbstractRequest {
-    @SuppressLint("SimpleDateFormat")
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+public class ReportRequest {
 
-    public ReportRequest(HttpClient httpclient, HttpContext context) {
-        super(httpclient, context);
+    private final OkHttpClient client;
+    private final String url;
+
+    public ReportRequest(OkHttpClient client, String url) {
+        this.client = client;
+        this.url = url;
     }
 
-
     public ArrayList<RecordTimbratura> getTimbrature(Date date) throws IOException, JSONException {
-        request = new HttpPost(URI.create(url));
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("rows", "10"));
-        formparams.add(new BasicNameValuePair("startrow", "0"));
-        formparams.add(new BasicNameValuePair("count", "true"));
-        formparams.add(new BasicNameValuePair("sqlcmd", "rows:ushp_fgettimbrus"));
-        formparams.add(new BasicNameValuePair("pDATE", dateFormat.format(date)));
-        request.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
-        HttpResponse response = httpclient.execute(request, context);
-        HttpEntity entity = response.getEntity();
-        String responseString = EntityUtils.toString(entity);
-        entity.consumeContent();
-        JSONObject jsonObject = new JSONObject(responseString);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("rows", "10")
+                .add("startrow", "0")
+                .add("count", "true")
+                .add("sqlcmd", "rows:ushp_fgettimbrus")
+                .add("pDATE", dateFormat.format(date))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+
+        Call call = client.newCall(request);
+        Response response = call.execute();
+        String string = response.body().string();
+        JSONObject jsonObject = new JSONObject(string);
+
         JSONArray fields = jsonObject.getJSONArray("Fields");
         String[] headers = new String[fields.length()];
         for (int i = 0; i < headers.length; i++) {
