@@ -2,9 +2,13 @@ name: Android CI
 
 on:
   push:
-    branches: [ timbratura_id ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches: 
+      - master
+  release:
+    types: [published, created, edited, prereleased, released]
 
 jobs:
   apk:
@@ -23,7 +27,7 @@ jobs:
     - name: Build with Gradle debug APK
       run: ./gradlew assembleDebug
     - name: Upload APK
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        name: app-debug-apk
+        name: timbrum-debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
