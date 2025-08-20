@@ -75,7 +75,7 @@ public class TimbrumAsynchTask extends AsyncTask<TimbrumAsynchTask.Action, Integ
                     }
                 }
                 publishProgress(R.string.loading_workspace);
-                String timbraturaId = timbrum.loadTimbraturaId();
+                String timbraturaId = timbrum.getTimbraturaId();
                 publishProgress(R.string.timbrum_in_progress);
                 timbrum.timbra(action.versoTimbratura, timbraturaId);
                 publishProgress(R.string.loading_logs);

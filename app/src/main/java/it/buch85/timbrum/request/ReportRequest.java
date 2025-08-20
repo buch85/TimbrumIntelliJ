@@ -29,14 +29,17 @@ public class ReportRequest {
         this.url = url;
     }
 
-    public ArrayList<RecordTimbratura> getTimbrature(Date date) throws IOException, JSONException {
+    public ArrayList<RecordTimbratura> getTimbrature(Date date, WorkspaceData workspaceData) throws IOException, JSONException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String cmdHash = workspaceData.getCmdHash(WorkspaceData.GETTIMBRUS_CMD);
 
         RequestBody formBody = new FormBody.Builder()
                 .add("rows", "10")
                 .add("startrow", "0")
                 .add("count", "true")
-                .add("sqlcmd", "rows:ushp_fgettimbrus")
+                .add("cmdhash", cmdHash)
+                .add("sqlcmd", WorkspaceData.GETTIMBRUS_CMD)
+                .add("isclientdb", "false")
                 .add("pDATE", dateFormat.format(date))
                 .build();
 

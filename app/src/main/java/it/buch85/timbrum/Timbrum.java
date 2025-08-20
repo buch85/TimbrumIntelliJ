@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 
 import it.buch85.timbrum.request.LoginRequest;
@@ -13,7 +12,7 @@ import it.buch85.timbrum.request.ReportRequest;
 import it.buch85.timbrum.request.RequestException;
 import it.buch85.timbrum.request.ServerTimeRequest;
 import it.buch85.timbrum.request.TimbraturaRequest;
-import it.buch85.timbrum.request.WorkspaceRequest;
+import it.buch85.timbrum.request.WorkspaceData;
 import okhttp3.CookieJar;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
@@ -35,6 +34,8 @@ public class Timbrum {
     private final String host;
 
     private final OkHttpClient client = createClient();
+
+    private WorkspaceData workspaceData;
 
     public Timbrum(String host, String username, String password) {
         this.host = host;
@@ -58,7 +59,10 @@ public class Timbrum {
 
     public Report getReport(Date date) throws Exception {
         ReportRequest report = new ReportRequest(client, host + SQL_DATA_PROVIDER_URL);
-        return new Report(report.getTimbrature(date));
+        if (workspaceData == null) {
+            workspaceData = new WorkspaceData(client, this.host + WORKSPACE_URL);
+        }
+        return new Report(report.getTimbrature(date, workspaceData));
     }
 
     public Date now() throws IOException, ParseException {
@@ -81,9 +85,9 @@ public class Timbrum {
         }
     }
 
-    public String loadTimbraturaId() throws RequestException {
-        WorkspaceRequest workspaceRequest = new WorkspaceRequest(client, host + WORKSPACE_URL);
-        return workspaceRequest.loadTimbraturaId();
+    public String getTimbraturaId() throws RequestException {
+        WorkspaceData workspaceData = new WorkspaceData(client, host + WORKSPACE_URL);
+        return workspaceData.getTimbraturaId();
     }
 
 }
